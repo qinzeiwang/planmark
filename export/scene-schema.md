@@ -1,3 +1,29 @@
+# Scene Schema v1 — English
+
+The bilingual example below is illustrative: src must contain real base64 image data and IDs must be actual generated values. Property names remain unchanged across languages.
+
+- x/y: normalized map coordinates in [0,1], anchored at the icon center.
+- Logical canvas width: 1000. Map origin: (20,20), width: 740; height follows the image ratio.
+- size: 24–64; fontSize: 12–28. Labels wrap at 16 characters.
+- labelSide: left/right/top/bottom, attached gap: 2. There are no independent label_x/label_y fields.
+- color sets the circular background; SVG strokes are white.
+- legend is fixed to {"position":"right-center"}; x=780, y=(canvas height−legend height)/2. Legacy free legend coordinates are ignored while equipment positions and parameters are preserved.
+- background.overlayOpacity: 0–1, defaults to 0 for older JSON. The white overlay affects the map only.
+- Legend rows are deduplicated by kind and named from the icon registry. name is the map label, including power or other parameters. The first occurrence supplies the representative color; mixed colors trigger a local warning.
+- Manual changes create a new revision. Images are embedded PNG/JPEG/WebP, with at most 200 annotations.
+- allowLeader is a user-controlled permission; leader can only be enabled when it is true. leaderDistance is 12–80.
+
+## Browser API
+
+- `EngineeringAnnotator.getScene()`: a copy of the current scene.
+- `EngineeringAnnotator.setScene(scene)`: validates and restores it, including actual image dimensions.
+- `EngineeringAnnotator.inspect()`: local rule findings.
+- `EngineeringAnnotator.exportPNG()`: Promise<Blob>, default 3840-pixel long edge. It generates the image; the button handles saving.
+
+There is no AI review/patch/preview/apply API. Saved v1 scene JSON remains supported; review or patch documents are not scene files.
+
+---
+
 # Scene 标注文件协议 v1
 
 ## Scene

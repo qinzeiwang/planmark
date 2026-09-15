@@ -1,101 +1,119 @@
-# PlanMark · Codex 工程平面图 Skill
+# PlanMark · Engineering Site Plans for Codex
 
-把卫星照片、地图截图或平面图重绘为淡色底图，再通过本地网页布置圆形设备图标与参数标签，保存可编辑 JSON 和 PNG。
+English | [简体中文](README.zh-CN.md)
 
-**AI 负责底图重绘，设备类型、点位和参数由用户确定。当前版本没有 AI 标注检查或自动修改功能。**
+Turn a satellite photo, map screenshot, or site plan into a light-colored base map, then place circular equipment icons and parameter labels in a local browser editor. Save an editable JSON project and export a PNG.
 
-## 使用前：AI 必须具备什么能力？
+**AI redraws the base map. You choose equipment, locations, and parameters. The editor provides local rule checks, not AI review or automatic changes.** The current editor interface and device names are in Simplified Chinese; documentation and prompts are bilingual.
 
-完整流程需要当前 Codex 会话同时具备：
+## AI requirements
 
-1. **看图能力**：能读取用户原图及随包参考图，判断建筑、道路、场地关系。
-2. **参考图生图 / 图像编辑工具**：能把用户原图作为结构参考 A，把一张风格图作为参考 B，依据提示词重绘。仅能聊天、写代码、识别图片或文生图，不能满足这个完整流程。
-3. **实际图片输出**：能返回可保存、可查看的图片，准备脚本使用 PNG 底图。
-4. **本地文件与命令执行**：能保存底图、运行 Python，并打开本地网页。
+The complete workflow requires the current Codex session to have:
 
-**安装 Skill 不会自动获得生图工具、模型额度或服务权限。**应由 Codex 检查当前会话实际可调用的工具，不能仅根据模型名字或“支持图片输入”判断。生图可能需要联网、账户权限和额度，具体由所用工具决定；本包不内置模型、API Key 或生图服务。
+1. Image understanding to inspect the original image and the supplied style reference.
+2. An image-editing tool that accepts the original as structure reference A and a selected style image as reference B. Text-only generation or image recognition alone is insufficient.
+3. Actual image output that can be saved and inspected. The project preparation script accepts a confirmed PNG base map.
+4. Local file and command access to save files, run Python, and open a local browser page.
 
-如果没有可用的参考图生图工具：助手应明确告知缺少能力，提供原提示词及参考图供外部工具使用；用户带回并确认 PNG 后，再继续标注。不得把滤镜、占位图或未执行的提示词当作已完成重绘。若提供的是已确认底图或保存的 JSON，则可跳过生图。
+Installing this skill does not provide an image model, tool access, API key, credits, or account permissions. Codex must check the tools available in the current session; image-input support alone does not imply image-generation support. Generation may require network access and credits from the selected provider. The editor itself needs no model or API key.
 
-## 安装到 Codex
+If reference-based generation is unavailable or fails, report the limitation without claiming that a redraw was completed or retrying indefinitely. Use the included prompt and reference image in an external image tool, then bring back and confirm the resulting PNG. A confirmed base map or saved JSON can skip generation entirely.
 
-### 方式一：让 Codex 安装
+## Install in Codex
 
-从 [GitHub 仓库](https://github.com/qinzeiwang/planmark) 下载 ZIP 并解压，或克隆仓库，然后把解压或克隆路径告诉 Codex：
+### Ask Codex to install
 
-> 请把这个目录中的 PlanMark 安装为个人 Skill。先检查有没有同名旧版，完整保留参考图和运行文件，安装后确认可调用。
+Download and extract this [repository](https://github.com/qinzeiwang/planmark), or clone it. Give Codex the local folder:
 
-目录应直接包含 `SKILL.md`，不要只复制这一份文件。安装成功后开启新会话；如果仍未出现，重启 Codex 再检查。
+> Install PlanMark from this folder as a personal skill. Check for an existing installation first, keep all references and runtime files, and verify that the skill is available.
 
-### 方式二：手动复制
+The folder must directly contain `SKILL.md`. Copy the entire folder, not only that file. Start a new session after installation; restart Codex if the skill does not appear.
 
-按官方本地 Skill 目录约定，把整个目录命名为 `planmark` 后放入：
+### Install manually
 
-| 范围 | 位置 |
+Copy the folder as `planmark` into one of these locations:
+
+| Scope | Location |
 | --- | --- |
-| 当前用户 | `~/.agents/skills/planmark/` |
-| 当前项目 | `<项目目录>/.agents/skills/planmark/` |
-| Windows 用户目录写法 | `%USERPROFILE%\.agents\skills\planmark\` |
+| Personal | `~/.agents/skills/planmark/` |
+| Project | `<project>/.agents/skills/planmark/` |
+| Windows personal | `%USERPROFILE%\.agents\skills\planmark\` |
 
-最终应是 `planmark/SKILL.md`，不要多嵌套一层 `planmark/planmark/`。若现有 Codex 安装器把技能放在其他已识别目录，沿用它的安装结果即可；不要在多个位置重复安装同名技能。目录和发现规则参见 [OpenAI 官方 Skill 文档](https://learn.chatgpt.com/docs/build-skills)。
+The result must be `planmark/SKILL.md`, not `planmark/planmark/SKILL.md`. If your existing installer uses another recognized skill location, keep its result; avoid duplicate installations. See the [official Codex skill documentation](https://learn.chatgpt.com/docs/build-skills).
 
-本项目以 **Codex 本地桌面使用**为主，CLI/IDE 也需具备上述工具能力。仅上传到云端会话不能保证可以打开你电脑上的本地标注页或系统保存窗口。
+This workflow targets local Codex use. CLI and IDE sessions also need the capabilities above. A cloud session alone cannot be assumed to control your local browser or native save dialog.
 
-## 本地运行环境
+## Local requirements
 
-- Python 3.9 或更新版本，`python` 可执行；系统另存为后备窗口需要 `tkinter` 和桌面环境。
-- 可打开本地页面的浏览器。PNG 优先使用浏览器文件选择器；支持情况以实际浏览器为准。
-- 普通标注无需 npm、Node.js 或模型 API Key；Node.js 与 Playwright 仅供开发测试使用。
-- 本地服务只监听 `127.0.0.1`。使用 `http://127.0.0.1:<端口>/...`，不要替换为 `localhost`，服务会校验 Host。
-- 已在 Windows + Python 3.12 + Chromium 验证；其他系统和真实系统保存窗口尚未全面验证。
+- Python 3.9+ available as `python`; native Save As fallback requires `tkinter` and a desktop session.
+- A browser that can open local pages. PNG export uses a browser file picker where supported, otherwise the local server opens a native dialog.
+- No npm or Node.js is needed for normal editing. Development tests use Node.js and Playwright.
+- The server listens only on `127.0.0.1`. Use that exact hostname; `localhost` is rejected by Host validation.
+- Tested on Windows with Python 3.12 and Chromium. Other platforms and real native save-dialog interactions are not fully verified.
 
-## 从调用开始
+## Use
 
-### 1. 附上原图
+### 1. Attach your original image
 
-在 Codex 新会话中附图，输入：
+Select PlanMark in the skill picker or invoke it explicitly:
 
-> $planmark 从这张卫星图开始。先检查当前会话是否支持参考图生图，重绘底图给我确认，再打开网页标注。
+> $planmark Start with this satellite image. Check that reference-based image generation is available. Show me the redrawn base map for confirmation before opening the annotation editor.
 
-也可在界面的技能选择器中选择 PlanMark。Codex CLI/IDE 的显式技能调用使用 `$`；不同产品界面的选择方式以实际界面为准。[官方调用说明](https://learn.chatgpt.com/docs/build-skills)
+Codex CLI and IDE support `$` skill mentions; other interfaces may use a skill selector. See the [official invocation guide](https://learn.chatgpt.com/docs/build-skills).
 
-助手会保留原始空间关系，使用[原提示词](01_底图处理/提示词/02_提示词模板与约束.md)。默认采用[浅色参考图](01_底图处理/参考图/01_风格参考图.png)，需要更强手绘感时采用[备选图](01_底图处理/参考图/04_备选风格参考图.png)。每次只用一张风格图，不能把参考图的建筑布局复制到用户地图上。
+The skill uses the [bilingual prompt](base-map/prompts/redraw.md) and the [default light reference](base-map/references/default.png). Choose the [hand-drawn reference](base-map/references/hand-drawn.png) only for a stronger illustrated look. Use one style reference per generation; its building layout must never replace the user's original layout.
 
-### 2. 确认底图
+### 2. Confirm the base map
 
-检查建筑是否增删、道路是否错位、比例与取景是否保留。满意后回复“底图确认，继续标注”。生图不保证工程测绘精度，结构错误应先修正。
+Check building count, road alignment, proportions, and crop. Fix structural errors before continuing. Generated images do not establish survey-grade accuracy.
 
-### 3. 网页手工标注
+> The base map is confirmed. Open the annotation editor.
 
-助手创建独立项目、启动本地服务并打开页面。用户无需手工拼装文件。
+### 3. Place annotations
 
-- 选择图标，在地图上点击放置，再填写 `10kW`、`100kWh` 等参数。
-- 图标与标签整体拖动；标签可紧贴四侧，参数标签避免随意隐藏。
-- 右侧图标说明仅显示设备种类，固定居中。
-- 顶部“底图淡化”降低底图存在感，默认 0%。
-- 本地检查只提示重叠、越界、隐藏标签和配色问题，不判断点位正确性、不自动修改。
+Codex prepares a new standalone project, starts its local server, and opens `editor/start.html`.
 
-### 4. 保存、导出与下次修改
+- Select an icon, click the map, and enter parameters such as `10kW` or `100kWh`.
+- Drag the icon and attached label together. Choose one of four label sides; avoid hiding parameter labels.
+- The fixed, vertically centered legend lists equipment categories, not parameter values.
+- Use the map-fade slider to reduce the visual prominence of the base image; the default is 0%.
+- Local checks report overlaps, out-of-bounds items, hidden labels, and color issues without changing the scene or validating engineering locations.
 
-- **保存 JSON**：包含底图、图标、位置、参数与淡化设置。支持文件选择器时可选位置；否则填写名称，位置由浏览器下载设置决定。
-- **导出 PNG**：长边 3840，包含地图和标注，不含工具栏；优先浏览器另存为，否则由本地服务打开系统窗口。取消不自动下载。
-- **继续编辑**：在网页“打开 JSON”，或附 JSON 调用 `$planmark 恢复这个标注项目，直接进入网页编辑。`
-- **重启服务**：关闭服务后，告诉 Codex 独立项目目录，让它重新启动该目录内的 `scripts/local-server.py` 并打开 `02_手动标注/start.html`。先保存 JSON；已保存的改动需重新导入，初始 start.html 不会自动更新成最后编辑状态。
+### 4. Save and resume
 
-详细差异见[保存与导出说明](03_保存与导出/01_保存与导出说明.md)。
+- **JSON:** embeds the base map, positions, parameters, and fade level. Choose a location where the browser supports a file picker; otherwise enter a filename and use the browser's download location.
+- **PNG:** exports a 3840-pixel long edge without editor controls. Uses browser Save As or the local native dialog; cancellation does not trigger a download.
+- **Resume:** use the editor's Open JSON button, or attach the file to Codex: `$planmark Restore this JSON directly into the editor.`
+- **Restart:** tell Codex the standalone project folder so it can run `scripts/local-server.py` and reopen `editor/start.html`. Reload your saved JSON; the initial HTML does not automatically contain later edits.
+- **Upgrade:** existing projects are independent copies. Save JSON and restore it into a new project using the updated skill. Existing projects using older directory names can still run with their original files.
 
-## 常见问题
+See [save and export details](export/guide.md).
 
-| 情况 | 处理 |
+## Troubleshooting
+
+| Issue | Action |
 | --- | --- |
-| 找不到 Skill | 检查目录层级、同名重复安装，开启新会话或重启 |
-| AI 能看图但不会生图 | 检查是否有图像编辑工具；没有则外部生成 PNG 后继续 |
-| 生图失败、超时或额度不足 | 明确报告失败，不自动反复重试；可在工具恢复后再试或改用确认后的 PNG |
-| 网页打不开 | 检查本地 Python 服务；端口占用时换空闲端口 |
-| PNG 无法另存为 | 通过本地服务打开，确认 tkinter 可用；界面报错时不能认为已经保存 |
-| 更新 Skill 后旧项目未变化 | 独立项目是副本；先保存 JSON，再用新版 Skill 恢复到新目录 |
+| Skill is missing | Check folder nesting and duplicate installations; start a new session or restart |
+| Can inspect images but cannot generate | Check for a reference-capable editing tool, or supply a confirmed PNG |
+| Generation fails or runs out of credits | Report failure; retry when available or use an externally generated PNG |
+| Page does not open | Check Python and the local server; choose a free port |
+| PNG Save As fails | Open through the local server and check tkinter; an error does not mean the file was saved |
+| Old project did not update | Save JSON and restore into a new project |
 
-## 开发验证
+## Repository layout
+
+```text
+SKILL.md                 Bilingual agent workflow
+README.md                English usage guide
+README.zh-CN.md           Chinese usage guide
+base-map/                Acceptance criteria, bilingual prompt, style images
+editor/                  Browser editor and embedded SVG icons
+export/                  Save behavior and scene schema
+scripts/                 Project preparation, local server, export test
+tests/                   Automated checks
+```
+
+## Tests
 
 ```sh
 node --test tests/scene.test.cjs
@@ -104,8 +122,8 @@ python -m unittest discover -s tests -p test_local_server.py
 node tests/browser.test.cjs
 ```
 
-浏览器测试需 Playwright 与 Chromium，可用 `PLANMARK_PLAYWRIGHT` 指向现有包。测试使用合成场景；文件句柄和系统窗口进程是模拟，不能代替真实另存为、覆盖确认等人工验收。自动化验证不包含真实 AI 生图。
+Browser tests require Playwright and Chromium. `PLANMARK_PLAYWRIGHT` can point to an existing package. Tests use synthetic scenes and mocked file handles/dialog processes; they do not prove real desktop Save As, overwrite confirmation, or actual image-generation quality.
 
-## 许可
+## License
 
-本项目的代码、文档、55 个图标和两张参考图均按 [MIT License](LICENSE) 提供。允许免费使用、修改、复制、分发及商用；复制或分发本项目或其主要部分时，须保留 `Copyright (c) 2026 qinzeiwang` 及完整许可文本。软件按现状提供，不作保证。
+Code, documentation, 55 icons, and both style references are provided under the [MIT License](LICENSE). Use, modification, redistribution, and commercial use are permitted. Copies or substantial portions must retain `Copyright (c) 2026 qinzeiwang` and the full license text. Provided as is, without warranty.

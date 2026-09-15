@@ -24,9 +24,9 @@ def prepare(output, image=None, scene_file=None):
             raise ValueError('请提供确认后的 PNG 底图；已有标注可使用 --scene')
         width,height=struct.unpack('>II',raw[16:24])
         scene={'version':1,'revision':str(uuid.uuid4()),'background':{'name':image.name,'src':'data:image/png;base64,'+base64.b64encode(raw).decode('ascii'),'width':width,'height':height,'overlayOpacity':0},'annotations':[],'legend':{'position':'right-center'}}
-    editor=output/'02_手动标注';editor.mkdir(parents=True)
+    editor=output/'editor';editor.mkdir(parents=True)
     for name in RUNTIME:
-        shutil.copy2(ROOT/'02_手动标注'/name,editor/name)
+        shutil.copy2(ROOT/'editor'/name,editor/name)
     scripts=output/'scripts';scripts.mkdir()
     for name in ['local-server.py']:
         shutil.copy2(ROOT/'scripts'/name,scripts/name)

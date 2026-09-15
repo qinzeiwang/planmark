@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),test=require('node:test');
-const core=require('../02_手动标注/scene-core.js');const ctx={window:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../02_手动标注/icons.generated.js'),'utf8'),ctx);const icons=ctx.window.PLANMARK_ICONS;
+const core=require('../editor/scene-core.js');const ctx={window:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../editor/icons.generated.js'),'utf8'),ctx);const icons=ctx.window.PLANMARK_ICONS;
 const annotation={id:'a',kind:'energy/battery',name:'100kWh',color:'#386e94',x:.3,y:.3,size:40,fontSize:17,labelSide:'right',labelVisible:true,allowLeader:false,leader:false,leaderDistance:40};
 const scene=()=>({version:1,revision:'test',background:{src:'data:image/png;base64,AA==',width:800,height:600},annotations:[{...annotation}],legend:{x:1,y:1}});
 test('restore preserves parameters and anchors, migrates legend and opacity',()=>{const s=core.validate(scene(),icons);assert.deepEqual(s.annotations[0],annotation);assert.equal(s.background.overlayOpacity,0);assert.deepEqual(s.legend,{position:'right-center'});assert.equal(Object.keys(icons).length,55)});

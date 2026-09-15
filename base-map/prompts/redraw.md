@@ -1,3 +1,34 @@
+# Base-map Redraw Prompt — English
+
+## Full prompt
+
+Redraw the site structure in Image A as a light-colored top-down site plan suitable for engineering proposal slides and equipment overlays. Image A determines building outlines, roads, greenery, water, sports grounds, parking areas, their count, and relative positions. Image B determines visual style only.
+
+Preserve Image A's aspect ratio, crop and overall spatial layout. Do not expand the site, add buildings or roads, move major spaces, infer unknown uses, or invent hidden structures. Use a true orthographic top-down view with pale blue-gray/off-white roofs, light gray roads, soft green vegetation, pale blue water and subtle consistent shadows. Avoid satellite textures, realistic materials, strong perspective and high contrast. This must be a redraw, not a filter.
+
+Omit map labels, map UI, dimensions, numbering and unrelated text or marks. Do not add equipment, icons or a legend. Keep the background clean and legible for later annotations.
+
+## Negative prompt
+
+Satellite texture, photorealism, dark roofs, heavy shadows, high contrast, noisy or blurry textures, map labels, watermark, UI elements, dramatic 3D rendering, perspective view, oversaturated colors, poster styling.
+
+## Parameterized template
+
+- `{source_type}`: map screenshot / satellite image / oblique aerial image / CAD plan.
+- `{site_type}`: campus / industrial park / factory / residential area / public building.
+- `{must_keep}`: specific buildings, roads, greenery, water and other essential structures.
+- `{style_ref}`: the selected default or hand-drawn style image; select one.
+
+Task: redraw Image A as a light site-plan base map.
+Input: {source_type}. Site: {site_type}.
+Structure reference: Image A. Style reference: Image B ({style_ref}).
+Keep: {must_keep}, original crop, ratio, building counts and relative layout.
+Output: a clean, bright, low-saturation PNG for engineering annotations, with no added text, icons or legend.
+
+Use either language version as appropriate for the image tool; do not concatenate conflicting prompts. Structural fidelity takes precedence over stylistic similarity.
+
+---
+
 # 提示词模板与约束
 
 ## 1. 主提示词（中文）

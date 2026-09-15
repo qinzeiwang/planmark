@@ -1,4 +1,4 @@
 interface:
   display_name: "PlanMark"
-  short_description: "将卫星照片重绘为淡色底图，手工标注设备与参数，保存 JSON 并另存 PNG"
-  default_prompt: "使用 $planmark 从这张卫星照片开始，先重绘底图给我确认，再进入手工标注。"
+  short_description: "Site-map redraw and annotation / 底图重绘与设备标注"
+  default_prompt: "Use $planmark to redraw this site image, ask me to confirm the base map, then open the annotation editor. 使用 $planmark 重绘底图，确认后进入标注。"
