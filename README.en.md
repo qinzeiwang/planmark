@@ -104,8 +104,8 @@ See [save and export details](export/guide.md).
 
 ```text
 SKILL.md                 Bilingual agent workflow
-README.md                English usage guide
-README.zh-CN.md           Chinese usage guide
+README.md                Simplified Chinese usage guide
+README.en.md             English usage guide
 base-map/                Acceptance criteria, bilingual prompt, style images
 editor/                  Browser editor and embedded SVG icons
 export/                  Save behavior and scene schema
