@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PlanMark · 工程平面标注</title>
+<link rel="stylesheet" href="annotator.css">
+</head>
+<body>
+<header><strong>PlanMark</strong><span class="muted">工程平面标注</span><div class="actions">
+<label class="btn">导入底图<input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden></label>
+<label class="btn">打开 JSON<input id="sceneInput" type="file" accept=".json" hidden></label>
+<button id="saveBtn">保存 JSON…</button><button id="pngBtn" class="primary">导出 PNG…</button>
+</div></header>
+<div class="app">
+<aside class="library"><h2>图标库 <small id="iconCount"></small></h2><input id="search" placeholder="搜索图标" aria-label="搜索图标"><select id="category" aria-label="图标分类"><option value="">全部分类</option><option value="energy">能源系统</option><option value="site">场地与建筑</option><option value="equipment">设备与数字化</option><option value="general">通用标注</option></select><div id="icons"></div></aside>
+<main><div class="toolbar"><span id="hint">导入重绘后的底图，开始标注</span><button id="cancelPlacement" hidden>取消放置</button><label class="fade-control">底图淡化 <input id="fadeInput" type="range" min="0" max="100" value="0" aria-label="底图淡化"><output id="fadeValue">0%</output></label></div><div id="viewport"><div id="empty"><h1>从一张底图开始</h1><p>导入确认后的淡色底图，选择图标，再点击地图放置。</p><p>图标和标签一起拖动。随时保存 JSON，下次直接打开。</p></div><svg id="drawing" xmlns="http://www.w3.org/2000/svg" hidden aria-label="工程平面示意图"></svg></div><div id="message" role="status" aria-live="polite"></div></main>
+<aside class="properties"><h2>当前标注</h2><p id="selectionHint" class="muted">点击地图上的图标或标签进行编辑。</p><fieldset id="annotationFields" disabled>
+<label>地图标签（功率 / 参数 / 名称）<input id="nameInput" maxlength="100" placeholder="例如 10kW、20kWh"></label>
+<p id="hiddenLabelNote" class="hidden-note" hidden>此标签已隐藏，参数不会出现在导出图中。勾选“显示紧贴标签”恢复。</p>
+<div class="pair"><label>颜色<input id="colorInput" type="color"></label><label>图标大小<input id="sizeInput" type="number" min="24" max="64" step="2"></label></div>
+<label>标签方向<select id="sideInput"><option value="right">右侧</option><option value="bottom">下方</option><option value="left">左侧</option><option value="top">上方</option></select></label>
+<label class="check"><input id="visibleInput" type="checkbox">显示紧贴标签</label>
+<label>标签字号<input id="fontInput" type="number" min="12" max="28"></label>
+<details><summary>引线（慎用）</summary><p class="muted">先尝试四个方向或隐藏标签。引线只在确实无法避让时使用，图标点位保持不动。</p><label class="check"><input id="allowLeaderInput" type="checkbox">允许此标注使用短引线</label><label class="check"><input id="leaderInput" type="checkbox">显示短引线</label><label>引出距离<input id="distanceInput" type="number" min="12" max="80" value="40"></label></details>
+<button id="deleteBtn" class="danger">删除此标注</button></fieldset>
+<section><h2>图标说明</h2><p class="muted">固定在右侧居中，说明设备种类。同一种图标只列一次；功率和参数保留在地图标签中。</p></section>
+<section><h2>本地检查</h2><p class="muted">自动检查重叠、越界、隐藏标签和白色图标对比度；不判断建筑位置是否正确。</p><button id="checkBtn">重新检查</button><ul id="findings"></ul></section>
+
+</aside></div>
+<script src="icons.generated.js"></script><script src="scene-core.js"></script><script src="annotator.js"></script>
+</body></html>
